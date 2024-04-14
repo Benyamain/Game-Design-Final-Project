@@ -29,6 +29,7 @@ QualitySettings:
     billboardsFaceCameraPosition: 1
     useLegacyDetailDistribution: 0
     vSyncCount: 1
+    realtimeGICPUUsage: 25
     lodBias: 1.5
     maximumLODLevel: 0
     enableLODCrossFade: 0
@@ -77,6 +78,7 @@ QualitySettings:
     billboardsFaceCameraPosition: 1
     useLegacyDetailDistribution: 0
     vSyncCount: 1
+    realtimeGICPUUsage: 25
     lodBias: 3.5
     maximumLODLevel: 0
     enableLODCrossFade: 0

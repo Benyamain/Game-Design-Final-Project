@@ -10,6 +10,11 @@ namespace SimpleFPS
 		Pistol,
 		Rifle,
 		Shotgun,
+		MP7,
+		AKM,
+		MCX,
+		Grenade,
+		Flashbang,
 	}
 
 	/// <summary>

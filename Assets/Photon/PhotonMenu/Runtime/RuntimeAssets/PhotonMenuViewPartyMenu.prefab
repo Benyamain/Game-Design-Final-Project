@@ -33,7 +33,6 @@ RectTransform:
   - {fileID: 2549449816141485735}
   - {fileID: 4215413211822194998}
   m_Father: {fileID: 4039561197434561952}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -113,7 +112,6 @@ RectTransform:
   - {fileID: 7246033906755719911}
   - {fileID: 3769755770049784910}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -140,6 +138,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!223 &494486387937566829
 Canvas:
   m_ObjectHideFlags: 0
@@ -157,7 +156,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -214,6 +215,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 4039561197434561952}
     m_Modifications:
     - target: {fileID: 5677097424650372304, guid: 13bd10092bb448f4e93e370a11809a5d, type: 3}
@@ -341,6 +343,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3437044788141942351, guid: 13bd10092bb448f4e93e370a11809a5d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4861636081259063640}
   m_SourcePrefab: {fileID: 100100000, guid: 13bd10092bb448f4e93e370a11809a5d, type: 3}
 --- !u!1 &3960313351493471678 stripped
 GameObject:
@@ -360,7 +368,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _textField: {fileID: 0}
-  _shortDescription: 0
 --- !u!114 &6790552619203842561 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5150967497489512944, guid: 13bd10092bb448f4e93e370a11809a5d, type: 3}
@@ -393,6 +400,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 3769755770049784910}
     m_Modifications:
     - target: {fileID: 237713985560705650, guid: 2a3ea96e16c4bc844aaa73818f97cdba, type: 3}
@@ -548,6 +556,9 @@ PrefabInstance:
       value: CreateCard
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2a3ea96e16c4bc844aaa73818f97cdba, type: 3}
 --- !u!224 &2549449816141485735 stripped
 RectTransform:
@@ -570,6 +581,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 3769755770049784910}
     m_Modifications:
     - target: {fileID: 237713985560705650, guid: 2a3ea96e16c4bc844aaa73818f97cdba, type: 3}
@@ -745,6 +757,9 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2a3ea96e16c4bc844aaa73818f97cdba, type: 3}
 --- !u!114 &2983434111918446017 stripped
 MonoBehaviour:
@@ -778,6 +793,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 4039561197434561952}
     m_Modifications:
     - target: {fileID: 1069063535695972184, guid: 81492d77d1a2dc249825473704d5db4c, type: 3}
@@ -889,6 +905,9 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 81492d77d1a2dc249825473704d5db4c, type: 3}
 --- !u!224 &9077368213347939459 stripped
 RectTransform:

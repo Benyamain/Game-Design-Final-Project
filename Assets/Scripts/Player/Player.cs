@@ -214,6 +214,26 @@ namespace SimpleFPS
 			{
 				Weapons.SwitchWeapon(EWeaponType.Shotgun);
 			}
+			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.MP7))
+			{
+				Weapons.SwitchWeapon(EWeaponType.MP7);
+			}
+			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.AKM))
+			{
+				Weapons.SwitchWeapon(EWeaponType.AKM);
+			}
+			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.MCX))
+			{
+				Weapons.SwitchWeapon(EWeaponType.MCX);
+			}
+			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Grenade))
+			{
+				Weapons.SwitchWeapon(EWeaponType.Grenade);
+			}
+			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Flashbang))
+			{
+				Weapons.SwitchWeapon(EWeaponType.Flashbang);
+			}
 
 			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Spray) && HasStateAuthority)
 			{

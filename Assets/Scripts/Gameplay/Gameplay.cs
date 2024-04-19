@@ -15,20 +15,20 @@ namespace SimpleFPS
 	public struct PlayerData : INetworkStruct
 	{
 		[Networked, Capacity(24)]
-		public string    Nickname { get => default; set {} }
+		public string Nickname { get => default; set { } }
 		public PlayerRef PlayerRef;
-		public int       Kills;
-		public int       Deaths;
-		public int       LastKillTick;
-		public int       StatisticPosition;
-		public bool      IsAlive;
-		public bool      IsConnected;
+		public int Kills;
+		public int Deaths;
+		public int LastKillTick;
+		public int StatisticPosition;
+		public bool IsAlive;
+		public bool IsConnected;
 	}
 
 	public enum EGameplayState
 	{
 		Skirmish = 0,
-		Running  = 1,
+		Running = 1,
 		Finished = 2,
 	}
 
@@ -39,15 +39,19 @@ namespace SimpleFPS
 	{
 		public GameUI GameUI;
 		public Player PlayerPrefab;
-		public float  GameDuration = 180f;
-		public float  PlayerRespawnTime = 5f;
-		public float  DoubleDamageDuration = 30f;
+		public float GameDuration = 180f;
+		public float PlayerRespawnTime = 5f;
+		public float DoubleDamageDuration = 30f;
 
-		[Networked][Capacity(32)][HideInInspector]
+		[Networked]
+		[Capacity(32)]
+		[HideInInspector]
 		public NetworkDictionary<PlayerRef, PlayerData> PlayerData { get; }
-		[Networked][HideInInspector]
+		[Networked]
+		[HideInInspector]
 		public TickTimer RemainingTime { get; set; }
-		[Networked][HideInInspector]
+		[Networked]
+		[HideInInspector]
 		public EGameplayState State { get; set; }
 
 		public bool DoubleDamageActive => State == EGameplayState.Running && RemainingTime.RemainingTime(Runner).GetValueOrDefault() < DoubleDamageDuration;
@@ -196,8 +200,9 @@ namespace SimpleFPS
 			RecalculateStatisticPositions();
 		}
 
-		private IEnumerator RespawnPlayer(PlayerRef playerRef, float delay)
+		public IEnumerator RespawnPlayer(PlayerRef playerRef, float delay)
 		{
+			//Debug.LogWarning($"{playerRef} respawn in {delay} seconds.");
 			if (delay > 0f)
 				yield return new WaitForSecondsRealtime(delay);
 

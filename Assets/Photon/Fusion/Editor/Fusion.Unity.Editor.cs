@@ -1,5 +1,21 @@
 #if !FUSION_DEV
 
+#region Assets/Photon/Fusion/Editor/AssemblyAttributes/FusionEditorAssemblyAttributes.Common.cs
+
+// merged EditorAssemblyAttributes
+
+#region RegisterEditorLoader.cs
+
+// the default edit-mode loader
+[assembly:Fusion.Editor.FusionGlobalScriptableObjectEditorAttribute(typeof(Fusion.FusionGlobalScriptableObject), AllowEditMode = true, Order = int.MaxValue)]
+
+#endregion
+
+
+
+#endregion
+
+
 #region Assets/Photon/Fusion/Editor/AssetObjectEditor.cs
 
 namespace Fusion.Editor {
@@ -4454,7 +4470,7 @@ namespace Fusion.Editor {
     }
     
     public static System.Type GetDrawerTypeIncludingWorkarounds(System.Attribute attribute) {
-      var drawerType = UnityInternal.ScriptAttributeUtility.GetDrawerTypeForType(attribute.GetType());
+      var drawerType = UnityInternal.ScriptAttributeUtility.GetDrawerTypeForType(attribute.GetType(), null, false);
       if (drawerType == null) {
         return null;
       }
@@ -4562,6 +4578,32 @@ namespace Fusion.Editor {
 #endregion
 
 
+#region FusionGlobalScriptableObjectEditorAttribute.cs
+
+namespace Fusion.Editor {
+  using System;
+  using UnityEditor;
+
+  class FusionGlobalScriptableObjectEditorAttribute : FusionGlobalScriptableObjectSourceAttribute {
+    public FusionGlobalScriptableObjectEditorAttribute(Type objectType) : base(objectType) {
+    }
+
+    public override FusionGlobalScriptableObjectLoadResult Load(Type type) {
+      var defaultAssetPath = FusionGlobalScriptableObjectUtils.FindDefaultAssetPath(type, fallbackToSearchWithoutLabel: true);
+      if (string.IsNullOrEmpty(defaultAssetPath)) {
+        return default;
+      }
+
+      var result = (FusionGlobalScriptableObject)AssetDatabase.LoadAssetAtPath(defaultAssetPath, type);
+      FusionEditorLog.Assert(result);
+      return result;
+    }
+  }
+}
+
+#endregion
+
+
 #region FusionGlobalScriptableObjectUtils.cs
 
 namespace Fusion.Editor {
@@ -4596,19 +4638,6 @@ namespace Fusion.Editor {
       }
 
       return attribute;
-    }
-    
-    [FusionGlobalScriptableObjectLoaderMethod(Order = int.MaxValue)]
-    public static FusionGlobalScriptableObjectLoadResult LoadEditorInstance(Type type) {
-      
-      var defaultAssetPath = FindDefaultAssetPath(type, fallbackToSearchWithoutLabel: true);
-      if (string.IsNullOrEmpty(defaultAssetPath)) {
-        return default;
-      }
-
-      var result = (FusionGlobalScriptableObject)AssetDatabase.LoadAssetAtPath(defaultAssetPath, type);
-      FusionEditorLog.Assert(result);
-      return result;
     }
 
     public static bool EnsureAssetExists<T>() where T : FusionGlobalScriptableObject<T> {
@@ -4696,7 +4725,7 @@ namespace Fusion.Editor {
       return true;
     }
     
-    private static string FindDefaultAssetPath(Type type, bool fallbackToSearchWithoutLabel = false) {
+    internal static string FindDefaultAssetPath(Type type, bool fallbackToSearchWithoutLabel = false) {
       
       // first try to locate assets of the type, with the default label
       var defaults = AssetDatabaseUtils.IterateAssets(type: type, label: GlobalAssetLabel)
@@ -5173,6 +5202,8 @@ namespace Fusion.Editor {
 
 namespace Fusion.Editor {
   using System;
+  using System.Collections;
+  using System.Collections.Generic;
   using System.Text;
   using UnityEditor;
   using UnityEngine;
@@ -5232,8 +5263,48 @@ namespace Fusion.Editor {
       }
     }
 
+    public void Refresh(IList<byte> values, int maxLength = 2048) {
+      Assert.Check(values != null);
+      
+      const int charactersPerElement = 2;
+      int arraySize = values.Count;
+      int arrayHash = 0;
+      int effectiveArraySize;
+      {
+        int length = 0;
+        int i;
+        for (i = 0; i < arraySize && length < maxLength; ++i) {
+          arrayHash = arrayHash * 31 + values[i];
+          length += charactersPerElement + 1;
+        }
+
+        effectiveArraySize = i;
+      }
+
+      if (_builder == null || arrayHash != _lastHash) {
+        var format = "{0:x" + charactersPerElement + "} ";
+
+        _builder ??= new StringBuilder();
+        _builder.Clear();
+
+        for (int i = 0; i < effectiveArraySize; ++i) {
+          _builder.AppendFormat(format, values[i]);
+        }
+
+        if (effectiveArraySize < arraySize) {
+          _builder.AppendLine("...");
+        }
+
+        _lastHash = arrayHash;
+        _lastValue = new GUIContent(_builder.ToString());
+      } else {
+        Debug.Assert(_lastValue != null);
+      }
+    }
+    
     public void Refresh(SerializedProperty property, int maxLength = 2048) {
-      Debug.Assert(property.isArray);
+      Assert.Check(property != null);
+      Assert.Check(property.isArray);
 
       int charactersPerElement;
       switch (property.arrayElementType) {
@@ -5301,6 +5372,11 @@ namespace Fusion.Editor {
     public string Draw(GUIContent label, Rect position) {
       var id = GUIUtility.GetControlID(UnityInternal.EditorGUI.DelayedTextFieldHash, FocusType.Keyboard, position);
       return UnityInternal.EditorGUI.DelayedTextFieldInternal(position, id, label, _lastValue.text ?? string.Empty, "0123456789abcdefABCDEF ", FusionEditorSkin.RawDataStyle);
+    }
+
+    public string DrawLayout() {
+      var position = EditorGUILayout.GetControlRect(false, 18f, FusionEditorSkin.RawDataStyle);
+      return Draw(position);
     }
   }
 }
@@ -6310,6 +6386,7 @@ namespace Fusion.Editor {
   using System;
   using System.Collections;
   using System.Collections.Generic;
+  using System.Linq;
   using System.Reflection;
   using UnityEditor;
   using UnityEngine;
@@ -6317,6 +6394,17 @@ namespace Fusion.Editor {
 
 
   static partial class UnityInternal {
+    
+    static Assembly FindAssembly(string name) {
+      return AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == name);
+    }
+    
+    [UnityEditor.InitializeOnLoad]
+    public static class Event {
+      static StaticAccessor<UnityEngine.Event> s_Current_ = typeof(UnityEngine.Event).CreateStaticFieldAccessor<UnityEngine.Event>(nameof(s_Current));
+      public static UnityEngine.Event s_Current => s_Current_.GetValue();
+    }
+    
     [UnityEditor.InitializeOnLoad]
     public static class Editor {
       public delegate bool DoDrawDefaultInspectorDelegate(SerializedObject obj);
@@ -6367,36 +6455,55 @@ namespace Fusion.Editor {
 
     [UnityEditor.InitializeOnLoad]
     public static class LayerMatrixGUI {
-
-      private static readonly Type InternalType = 
+      private const string TypeName =
 #if UNITY_2023_1_OR_NEWER
-        Assembly.Load("UnityEditor.PhysicsModule").GetType("UnityEditor.LayerMatrixGUI", true);
+        "UnityEditor.LayerCollisionMatrixGUI2D";
+#else
+        "UnityEditor.LayerMatrixGUI";
+#endif
+
+      private static readonly Type InternalType =
+#if UNITY_2023_1_OR_NEWER
+        FindAssembly("UnityEditor.Physics2DModule")?.GetType(TypeName, true);
 #else 
-        typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.LayerMatrixGUI", true);
+        typeof(UnityEditor.Editor).Assembly.GetType(TypeName, true);
 #endif
       
-      private static readonly Type InternalGetValueFuncType = InternalType.GetNestedTypeOrThrow(nameof(GetValueFunc), BindingFlags.Public);
-      private static readonly Type InternalSetValueFuncType = InternalType.GetNestedTypeOrThrow(nameof(SetValueFunc), BindingFlags.Public);
+      private static readonly Type InternalGetValueFuncType = InternalType?.GetNestedTypeOrThrow(nameof(GetValueFunc), BindingFlags.Public);
+      private static readonly Type InternalSetValueFuncType = InternalType?.GetNestedTypeOrThrow(nameof(SetValueFunc), BindingFlags.Public);
       
-      private static readonly Delegate _doGUI = InternalType.CreateMethodDelegate(nameof(DoGUI), BindingFlags.Public | BindingFlags.Static,
+#if UNITY_2023_1_OR_NEWER
+      private static readonly Delegate _Draw = InternalType?.CreateMethodDelegate(nameof(Draw), BindingFlags.Public | BindingFlags.Static, 
+        typeof(Action<,,>).MakeGenericType(
+          typeof(GUIContent), InternalGetValueFuncType, InternalSetValueFuncType)
+      );
+#else 
+      private delegate void Ref2Action<T1, T2, T3, T4>(T1 t1, ref T2 t2, T3 t3, T4 t4);
+
+      private static readonly Delegate _DoGUI = InternalType?.CreateMethodDelegate("DoGUI", BindingFlags.Public | BindingFlags.Static,
         typeof(Ref2Action<,,,>).MakeGenericType(
           typeof(GUIContent), typeof(bool), InternalGetValueFuncType, InternalSetValueFuncType)
       );
-
-      private delegate void Ref2Action<T1, T2, T3, T4>(T1 t1, ref T2 t2, T3 t3, T4 t4);
-
+#endif
+      
       public delegate bool GetValueFunc(int layerA, int layerB);
-
       public delegate void SetValueFunc(int layerA, int layerB, bool val);
 
-      public static void DoGUI(string title, ref bool show, GetValueFunc getValue, SetValueFunc setValue) {
+      public static void Draw(GUIContent label, GetValueFunc getValue, SetValueFunc setValue) {
+        if (InternalType == null) {
+          throw new InvalidOperationException($"{TypeName} not found");
+        }
+        
         var getter = Delegate.CreateDelegate(InternalGetValueFuncType, getValue.Target, getValue.Method);
         var setter = Delegate.CreateDelegate(InternalSetValueFuncType, setValue.Target, setValue.Method);
-
-        var args = new object[] { title, show, getter, setter };
-        args[0] = new GUIContent(title);
-        _doGUI.DynamicInvoke(args);
-        show = (bool)args[1];
+        
+#if UNITY_2023_1_OR_NEWER
+        _Draw.DynamicInvoke(label, getter, setter);
+#else
+        bool show = true;
+        var args = new object[] { label, show, getter, setter };
+        _DoGUI.DynamicInvoke(args);
+#endif
       }
     }
 
@@ -6445,7 +6552,6 @@ namespace Fusion.Editor {
 
     [UnityEditor.InitializeOnLoad]
     public static class ScriptAttributeUtility {
-      public delegate Type GetDrawerTypeForTypeDelegate(Type type);
 
       public delegate List<PropertyAttribute> GetFieldAttributesDelegate(FieldInfo field);
 
@@ -6459,11 +6565,34 @@ namespace Fusion.Editor {
           "GetFieldInfoFromProperty",
           BindingFlags.Static | BindingFlags.NonPublic);
 
+      public delegate Type GetDrawerTypeForPropertyAndTypeDelegate(SerializedProperty property, Type type);
+      public delegate Type GetDrawerTypeForTypeDelegate(Type type, Type[] renderPipelineTypes, bool isManagedReference);
+      
+      
+      
+#if UNITY_2023_3_OR_NEWER
+      public static readonly GetDrawerTypeForPropertyAndTypeDelegate GetDrawerTypeForPropertyAndType =
+        CreateEditorMethodDelegate<GetDrawerTypeForPropertyAndTypeDelegate>(
+          "UnityEditor.ScriptAttributeUtility",
+          nameof(GetDrawerTypeForPropertyAndType),
+          BindingFlags.Static | BindingFlags.NonPublic);
+      
       public static readonly GetDrawerTypeForTypeDelegate GetDrawerTypeForType =
         CreateEditorMethodDelegate<GetDrawerTypeForTypeDelegate>(
           "UnityEditor.ScriptAttributeUtility",
+          nameof(GetDrawerTypeForType),
+          BindingFlags.Static | BindingFlags.NonPublic);
+#else
+      private delegate Type LegacyGetDrawerTypeForTypeDelegate(Type type);
+      private static readonly LegacyGetDrawerTypeForTypeDelegate LegacyGetDrawerTypeForType =
+        CreateEditorMethodDelegate<LegacyGetDrawerTypeForTypeDelegate>(
+          "UnityEditor.ScriptAttributeUtility",
           "GetDrawerTypeForType",
           BindingFlags.Static | BindingFlags.NonPublic);
+      
+      public static readonly GetDrawerTypeForPropertyAndTypeDelegate GetDrawerTypeForPropertyAndType = (_, type) => LegacyGetDrawerTypeForType(type);
+      public static readonly GetDrawerTypeForTypeDelegate GetDrawerTypeForType = (type, _, _) => LegacyGetDrawerTypeForType(type);
+#endif
 
       private static readonly GetHandlerDelegate _GetHandler = InternalType.CreateMethodDelegate<GetHandlerDelegate>("GetHandler", BindingFlags.NonPublic | BindingFlags.Static,
         MakeFuncType(typeof(SerializedProperty), PropertyHandler.InternalType)
@@ -7238,7 +7367,7 @@ namespace Fusion.Editor {
         for (var i = 0; i < fieldAttributes.Count; ++i) {
           var fieldAttribute = fieldAttributes[i];
 
-          var attributeDrawerType = UnityInternal.ScriptAttributeUtility.GetDrawerTypeForType(fieldAttribute.GetType());
+          var attributeDrawerType = UnityInternal.ScriptAttributeUtility.GetDrawerTypeForPropertyAndType(property, fieldAttribute.GetType());
           if (attributeDrawerType == null) {
             TraceField($"No drawer for {attributeDrawerType}");
             continue;
@@ -7286,7 +7415,7 @@ namespace Fusion.Editor {
           fieldType = fieldType.GetUnityLeafType();
         }
         
-        var typeDrawerType = UnityInternal.ScriptAttributeUtility.GetDrawerTypeForType(fieldType);
+        var typeDrawerType = UnityInternal.ScriptAttributeUtility.GetDrawerTypeForPropertyAndType(property, fieldType);
         if (typeDrawerType != null) {
           var drawer = (PropertyDrawer)Activator.CreateInstance(typeDrawerType);
           UnityInternal.PropertyDrawer.SetFieldInfo(drawer, fieldInfo);
@@ -8282,17 +8411,15 @@ namespace Fusion.Editor {
       private const int margin       = 30;
       private const int MaxLayers    = 32;
 
-      private readonly string _name;
-      private readonly int    _numLayers;
-      private readonly float  _labelWidth;
+      private readonly GUIContent _label;
+      private readonly int _numLayers;
+      private readonly float _labelWidth;
       
       private readonly UnityInternal.LayerMatrixGUI.GetValueFunc _getter;
       private readonly UnityInternal.LayerMatrixGUI.SetValueFunc _setter;
       
-      private bool  _show = true;
-      
-      public LayerMatrixPopup(string name, UnityInternal.LayerMatrixGUI.GetValueFunc getter, UnityInternal.LayerMatrixGUI.SetValueFunc setter) {
-        _name       = name;
+      public LayerMatrixPopup(string label, UnityInternal.LayerMatrixGUI.GetValueFunc getter, UnityInternal.LayerMatrixGUI.SetValueFunc setter) {
+        _label      = new GUIContent(label);
         _getter     = getter;
         _setter     = setter;
         _labelWidth = 110;
@@ -8311,8 +8438,7 @@ namespace Fusion.Editor {
       public override void OnGUI(Rect rect) {
         GUILayout.BeginArea(rect);
         
-        UnityInternal.LayerMatrixGUI.DoGUI(_name, ref _show, _getter, _setter);
-        _show = true;
+        UnityInternal.LayerMatrixGUI.Draw(_label, _getter, _setter);
 
         GUILayout.EndArea();
       }
@@ -9579,16 +9705,12 @@ namespace Fusion.Editor {
 
 #if ODIN_INSPECTOR && !FUSION_ODIN_DISABLED
 namespace Fusion.Editor {
-  using System;
-  using System.Reflection;
-  using Sirenix.OdinInspector.Editor;
-  using UnityEditor;
-  using UnityEngine;
+  using Sirenix.OdinInspector;
 
   partial class BinaryDataAttributeDrawer {
     [FusionOdinAttributeConverter]
     static System.Attribute[] ConvertToOdinAttributes(System.Reflection.MemberInfo memberInfo, BinaryDataAttribute attribute) {
-      return Array.Empty<System.Attribute>();
+      return new[] { new DrawWithUnityAttribute() };
     }
   }
 }
@@ -9797,6 +9919,10 @@ namespace Fusion.Editor {
     }
 
     class OdinDrawer : OdinAttributeDrawer<OdinAttributeProxy> {
+      protected override bool CanDrawAttributeProperty(InspectorProperty property) {
+        return !property.IsArrayElement(out _);
+      }
+
       protected override void DrawPropertyLayout(GUIContent label) {
         CallNextDrawer(label);
 
@@ -10233,8 +10359,8 @@ namespace Fusion.Editor {
         }
       }
 
-
-      var propertyDrawerType = UnityInternal.ScriptAttributeUtility.GetDrawerTypeForType(property.ValueEntry.TypeOfValue);
+      
+      var propertyDrawerType = UnityInternal.ScriptAttributeUtility.GetDrawerTypeForType(property.ValueEntry.TypeOfValue, null, false);
 
       if (propertyDrawerType != null) {
         var meta = propertyDrawerType.GetCustomAttribute<FusionPropertyDrawerMetaAttribute>();
@@ -10562,12 +10688,12 @@ namespace Fusion.Editor {
         var prefab = (GameObject)EditorUtility.InstanceIDToObject(context.InstanceID);
 
         result = new TSource() {
-          Prefab = prefab.GetComponent<TAsset>()
+          Object = prefab.GetComponent<TAsset>()
         };
         
       } else {
         result = new TSource() {
-          Prefab = new(context.InstanceID)
+          Object = new(context.InstanceID)
         };
       }
       return true;

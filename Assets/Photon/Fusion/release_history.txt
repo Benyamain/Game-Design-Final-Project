@@ -107,6 +107,72 @@ For a more in-depth overview over what changed check: [Coming from Fusion 1.0](h
 - Fixed: All folders ending with `Resources` incorrectly recognized as `Resources` folders, making some of the contained prefabs unspawnable
 - Fixed: "unresolved external symbol" runtime errors if an abstract class deriving from `NetworkBehaviour` has no `[Networked]` properties
 
+## RC5
+
+### Build 824 (Mar 26, 2024)
+
+**Bug Fixes**
+
+- Fixed: Shared Mode State not being replicated
+- Fixed: RPCs not receiving objects with global AOI
+
+### Build 823 (Mar 25, 2024)
+
+**Bug Fixes**
+
+- Fixed: Object does not exist: [Id:X], but is marked as confirmed
+
+### Build 822 (Mar 21, 2024)
+
+**What's New**
+
+- Hitbox collider position and rotation data for LagCompensatedHit
+- Added new API to control which network behaviours state is replicated to each player
+- Added new input sending mode for high player count / low input size games like first person shooters
+- Fusion Menu Package
+- VisionOS version of nanosockets library
+- StartGameArgs.SessionNameGenerator
+
+**Changes**
+
+- Minor improvements when updating Lag compensation hitbox roots
+- Improved lag compensation subtick broadphase  
+Hitbox roots now are interpolated correctly even if they are unique to one candidates snapshot
+- Photon Realtime SDK to 4.1.8.1
+- Simulation Behaviours now have Spawned and Despawned called if they inherit the interfaces
+- Renamed settings on `TimeSyncConfiguration` and updated their descriptions.  
+- `ExtraSimulationOffset` is now `RedundantInputs`.  
+- `ExtraInterpolationOffset` is now `RedundantSnapshots`
+- Max payload size for RPC to 512 bytes
+- RPCs are culled if payload size is over `RpcAttribute.MaxPayloadSize` bytes
+- Improved performance of SendPackets loop
+- Implemented packet throttling to 2 packets/second when the client vanishes
+- Removed lag compensation lazy initialization. Make sure to enable lag comp in the network project config to use it
+- Photon uses AlternativeUdpPorts only when Port is default
+
+**Removed**
+
+- Physics Add-on from SDK package
+
+**Bug Fixes**
+
+- Fixed: Remove NetworkObject from AoI when destroyed
+- Fixed: Logs in Release Mode
+- Fixed: SinglePlayer PlayerRef to 1
+- Fixed: Changed shared mode send rate to 16
+- Fixed: NRB would immediately revert inspector changes made to the RigidBody.IsKinematic value on the State Authority when no interpolation target was being used. Changes made to isKinematic in the inspector and in Update() should not stick as expected
+- Fixed: InPackets and OutPackets SimulationStats displaying incorrect values on the fusion stats
+- Fixed: NetworkMecanimAnimator was not writing int parameters to the network buffer, now they are
+- Fixed: Typo in `RpcLocalInvokeResult.TargetPlayerIsNotLocal` (was: `RpcLocalInvokeResult.TagetPlayerIsNotLocal`)
+- Fixed: Lag Compensation Client hitbox registration window and subtick imprecision
+- Fixed: Property readers for collection of reference types throwing an exception
+- Fixed: `LayerMatrixGUI` error on latest Unity 2023.2
+- Fixed: Convert ping on game overlay from seconds to milliseconds
+- Fixed: Lag compensation lazy initialization leaving empty spots on the buffer
+- Fixed: Capsule hitbox narrowphase offset problem
+- Fixed: Minor details on the Intro Sample
+- Fixed: IPhotonEncryptor Type Auto Load
+
 ## RC3
 
 ### Build 805 (Jan 17, 2024)

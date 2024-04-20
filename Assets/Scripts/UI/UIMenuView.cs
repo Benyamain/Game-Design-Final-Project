@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Fusion;
 
 namespace SimpleFPS
 {
@@ -30,6 +31,24 @@ namespace SimpleFPS
 
 			_gameUI.GoToMenu();
 		}
+
+		public void Respawn()
+		{
+			//Debug.Log("Respawn");
+			if (_gameUI != null && _gameUI.Gameplay != null && _gameUI.Gameplay.Runner != null && _gameUI.Gameplay.Runner.LocalPlayer != null)
+			{
+				//Debug.Log("Respawn 2");
+				var playerRef = _gameUI.Gameplay.Runner.LocalPlayer;
+				if (_gameUI.Gameplay.PlayerData.ContainsKey(playerRef))
+				{
+					StartCoroutine(_gameUI.Gameplay.RespawnPlayer(playerRef, 0f));
+				}
+			}
+			gameObject.SetActive(false);
+			Cursor.lockState = _previousLockState;
+		}
+
+
 
 		private void Awake()
 		{

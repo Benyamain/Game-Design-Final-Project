@@ -13,11 +13,7 @@ namespace SimpleFPS
 		Pistol,
 		Rifle,
 		Shotgun,
-		MP7,
 		AKM,
-		MCX,
-		Grenade,
-		Flashbang,
 		Spray,
 	}
 
@@ -123,11 +119,7 @@ namespace SimpleFPS
 				_accumulatedInput.Buttons.Set(EInputButton.Pistol, keyboard.digit1Key.isPressed || keyboard.numpad1Key.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Rifle, keyboard.digit2Key.isPressed || keyboard.numpad2Key.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Shotgun, keyboard.digit3Key.isPressed || keyboard.numpad3Key.isPressed);
-				_accumulatedInput.Buttons.Set(EInputButton.MP7, keyboard.digit4Key.isPressed || keyboard.numpad4Key.isPressed);
-				_accumulatedInput.Buttons.Set(EInputButton.AKM, keyboard.digit5Key.isPressed || keyboard.numpad5Key.isPressed);
-				_accumulatedInput.Buttons.Set(EInputButton.MCX, keyboard.digit6Key.isPressed || keyboard.numpad6Key.isPressed);
-				_accumulatedInput.Buttons.Set(EInputButton.Grenade, keyboard.digit7Key.isPressed || keyboard.numpad7Key.isPressed);
-				_accumulatedInput.Buttons.Set(EInputButton.Flashbang, keyboard.digit8Key.isPressed || keyboard.numpad8Key.isPressed);
+				_accumulatedInput.Buttons.Set(EInputButton.AKM, keyboard.digit4Key.isPressed || keyboard.numpad4Key.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Spray, keyboard.fKey.isPressed);
 			}
 		}

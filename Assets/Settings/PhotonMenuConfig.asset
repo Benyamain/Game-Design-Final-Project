@@ -23,5 +23,8 @@ MonoBehaviour:
   - Name: Deathmatch
     ScenePath: Assets/Scenes/Deathmatch.unity
     Preview: {fileID: 21300000, guid: 852d3aabadb24794194acd945f7e9e13, type: 3}
+  - Name: Woods
+    ScenePath: Assets/Scenes/Woods.unity
+    Preview: {fileID: 21300000, guid: a84c9d5a7c720944db04c5a80b86960f, type: 3}
   _machineId: {fileID: -755480892457977500, guid: 14d0ba76e6402554fb21eb7d976871ff, type: 3}
   _codeGenerator: {fileID: 11400000, guid: 2d88136449f10fb4da15557de6b21b72, type: 2}

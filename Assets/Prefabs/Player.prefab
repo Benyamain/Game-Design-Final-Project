@@ -1801,6 +1801,10 @@ PrefabInstance:
       value: Hands_AKM_2
       objectReference: {fileID: 0}
     - target: {fileID: 7004690799522730438, guid: 7ce4f5bd54054f946a1ea2ab9686c4c5, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: fb9b9a5ca65dfa24da26558d10a35386, type: 3}
+    - target: {fileID: 7004690799522730438, guid: 7ce4f5bd54054f946a1ea2ab9686c4c5, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 3cedc9cad8fe6904285249459dd9cbd6, type: 2}
@@ -2252,6 +2256,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7805520083709625352}
     - target: {fileID: 2414522684100043775, guid: 390d0cb745bb64a32be95c91bfab6e75, type: 3}
+      propertyPath: FireRate
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: 390d0cb745bb64a32be95c91bfab6e75, type: 3}
+      propertyPath: StartAmmo
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: 390d0cb745bb64a32be95c91bfab6e75, type: 3}
+      propertyPath: MaxClipAmmo
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: 390d0cb745bb64a32be95c91bfab6e75, type: 3}
       propertyPath: WeaponVisual
       value: 
       objectReference: {fileID: 7855771289032480396}
@@ -2393,9 +2409,33 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2414522684100043775, guid: aaf47ababa3a3c243a28f264e15f2456, type: 3}
+      propertyPath: Damage
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: aaf47ababa3a3c243a28f264e15f2456, type: 3}
       propertyPath: Animator
       value: 
       objectReference: {fileID: 7459209005916707224}
+    - target: {fileID: 2414522684100043775, guid: aaf47ababa3a3c243a28f264e15f2456, type: 3}
+      propertyPath: FireRate
+      value: 750
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: aaf47ababa3a3c243a28f264e15f2456, type: 3}
+      propertyPath: StartAmmo
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: aaf47ababa3a3c243a28f264e15f2456, type: 3}
+      propertyPath: ReloadTime
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: aaf47ababa3a3c243a28f264e15f2456, type: 3}
+      propertyPath: MaxClipAmmo
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: aaf47ababa3a3c243a28f264e15f2456, type: 3}
+      propertyPath: MaxHitDistance
+      value: 250
+      objectReference: {fileID: 0}
     - target: {fileID: 2414522684100043775, guid: aaf47ababa3a3c243a28f264e15f2456, type: 3}
       propertyPath: FirstPersonVisual
       value: 
@@ -2456,6 +2496,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5468680780558785418, guid: aaf47ababa3a3c243a28f264e15f2456, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 0a0349a5bd0f97848837294623027f1b, type: 3}
     - target: {fileID: 6109838540200034262, guid: aaf47ababa3a3c243a28f264e15f2456, type: 3}
       propertyPath: m_Name
       value: AKM
@@ -3663,6 +3707,10 @@ PrefabInstance:
       propertyPath: Animator
       value: 
       objectReference: {fileID: 6685709305710314942}
+    - target: {fileID: 2414522684100043775, guid: ac5b79de104c04dfc84c9d444dcfe967, type: 3}
+      propertyPath: FireRate
+      value: 600
+      objectReference: {fileID: 0}
     - target: {fileID: 2414522684100043775, guid: ac5b79de104c04dfc84c9d444dcfe967, type: 3}
       propertyPath: WeaponVisual
       value: 

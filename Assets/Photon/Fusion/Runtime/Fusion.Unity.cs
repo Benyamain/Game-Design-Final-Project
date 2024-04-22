@@ -1,5 +1,21 @@
 #if !FUSION_DEV
 
+#region Assets/Photon/Fusion/Runtime/AssemblyAttributes/FusionAssemblyAttributes.Common.cs
+
+// merged AssemblyAttributes
+
+#region RegisterResourcesLoader.cs
+
+// register a default loader; it will attempt to load the asset from their default paths if they happen to be Resources
+[assembly:Fusion.FusionGlobalScriptableObjectResource(typeof(Fusion.FusionGlobalScriptableObject), Order = 2000, AllowFallback = true)]
+
+#endregion
+
+
+
+#endregion
+
+
 #region Assets/Photon/Fusion/Runtime/FusionAssetSource.Common.cs
 
 // merged AssetSource
@@ -297,7 +313,15 @@ namespace Fusion {
 
   [Serializable]
   public partial class NetworkAssetSourceStatic<T> where T : UnityEngine.Object {
-    public T Prefab;
+
+    [FormerlySerializedAs("Prefab")]
+    public T Object;
+
+    [Obsolete("Use Asset instead")]
+    public T Prefab {
+      get => Object;
+      set => Object = value;
+    }
     
     public bool IsCompleted => true;
 
@@ -310,22 +334,22 @@ namespace Fusion {
     }
 
     public T WaitForResult() {
-      if (Prefab == null) {
+      if (Object == null) {
         throw new InvalidOperationException("Missing static reference");
       }
 
-      return Prefab;
+      return Object;
     }
     
     public string Description {
       get {
-        if (Prefab) {
+        if (Object) {
 #if UNITY_EDITOR
-          if (UnityEditor.AssetDatabase.TryGetGUIDAndLocalFileIdentifier(Prefab, out var guid, out long fileID)) {
+          if (UnityEditor.AssetDatabase.TryGetGUIDAndLocalFileIdentifier(Object, out var guid, out long fileID)) {
             return $"Static: {guid}, fileID: {fileID}";
           }
 #endif
-          return "Static: " + Prefab;
+          return "Static: " + Object;
         } else {
           return "Static: (null)";
         }
@@ -333,7 +357,7 @@ namespace Fusion {
     }
     
 #if UNITY_EDITOR
-    public T EditorInstance => Prefab;
+    public T EditorInstance => Object;
 #endif
   }
 }
@@ -354,7 +378,15 @@ namespace Fusion {
 
   [Serializable]
   public partial class NetworkAssetSourceStaticLazy<T> where T : UnityEngine.Object {
-    public LazyLoadReference<T> Prefab;
+    
+    [FormerlySerializedAs("Prefab")] 
+    public LazyLoadReference<T> Object;
+    
+    [Obsolete("Use Object instead")]
+    public LazyLoadReference<T> Prefab {
+      get => Object;
+      set => Object = value;
+    }
     
     public bool IsCompleted => true;
 
@@ -367,24 +399,24 @@ namespace Fusion {
     }
 
     public T WaitForResult() {
-      if (Prefab.asset == null) {
+      if (Object.asset == null) {
         throw new InvalidOperationException("Missing static reference");
       }
 
-      return Prefab.asset;
+      return Object.asset;
     }
     
     public string Description {
       get {
-        if (Prefab.isBroken) {
+        if (Object.isBroken) {
           return "Static: (broken)";
-        } else if (Prefab.isSet) {
+        } else if (Object.isSet) {
 #if UNITY_EDITOR
-          if (UnityEditor.AssetDatabase.TryGetGUIDAndLocalFileIdentifier(Prefab.instanceID, out var guid, out long fileID)) {
+          if (UnityEditor.AssetDatabase.TryGetGUIDAndLocalFileIdentifier(Object.instanceID, out var guid, out long fileID)) {
             return $"Static: {guid}, fileID: {fileID}";
           }
 #endif
-          return "Static: " + Prefab.asset;
+          return "Static: " + Object.asset;
         } else {
           return "Static: (null)";
         }
@@ -392,8 +424,115 @@ namespace Fusion {
     }
     
 #if UNITY_EDITOR
-    public T EditorInstance => Prefab.asset;
+    public T EditorInstance => Object.asset;
 #endif
+  }
+}
+
+#endregion
+
+
+#region FusionGlobalScriptableObjectAddressAttribute.cs
+
+namespace Fusion {
+  using System;
+  using UnityEngine.Scripting;
+
+#if (FUSION_ADDRESSABLES || FUSION_ENABLE_ADDRESSABLES) && !FUSION_DISABLE_ADDRESSABLES 
+  using UnityEngine.AddressableAssets;
+  using UnityEngine.ResourceManagement.AsyncOperations;
+#endif
+  
+  [Preserve]
+  public class FusionGlobalScriptableObjectAddressAttribute : FusionGlobalScriptableObjectSourceAttribute {
+    public FusionGlobalScriptableObjectAddressAttribute(Type objectType, string address) : base(objectType) {
+      Address = address;
+    }
+
+    public string Address { get; }
+    
+    public override FusionGlobalScriptableObjectLoadResult Load(Type type) {
+#if (FUSION_ADDRESSABLES || FUSION_ENABLE_ADDRESSABLES) && !FUSION_DISABLE_ADDRESSABLES
+      Assert.Check(!string.IsNullOrEmpty(Address));
+      
+      var op = Addressables.LoadAssetAsync<FusionGlobalScriptableObject>(Address);
+      var instance = op.WaitForCompletion();
+      if (op.Status == AsyncOperationStatus.Succeeded) {
+        Assert.Check(instance);
+        return new (instance, x => Addressables.Release(op));
+      }
+      
+      Log.Trace($"Failed to load addressable at address {Address} for type {type.FullName}: {op.OperationException}");
+      return default;
+#else
+      Log.Trace($"Addressables are not enabled. Unable to load addressable for {type.FullName}");
+      return default;
+#endif
+    }
+  }
+}
+
+#endregion
+
+
+#region FusionGlobalScriptableObjectResourceAttribute.cs
+
+namespace Fusion {
+  using System;
+  using System.Diagnostics.CodeAnalysis;
+  using System.IO;
+  using System.Reflection;
+  using UnityEngine;
+  using UnityEngine.Scripting;
+  using Object = UnityEngine.Object;
+  
+  [Preserve]
+  public class FusionGlobalScriptableObjectResourceAttribute : FusionGlobalScriptableObjectSourceAttribute {
+    public FusionGlobalScriptableObjectResourceAttribute(Type objectType, string resourcePath = "") : base(objectType) {
+      ResourcePath = resourcePath;
+    }
+    
+    public string ResourcePath { get; }
+    public bool InstantiateIfLoadedInEditor { get; set; } = true;
+    
+    public override FusionGlobalScriptableObjectLoadResult Load(Type type) {
+      
+      var attribute = type.GetCustomAttribute<FusionGlobalScriptableObjectAttribute>();
+      Assert.Check(attribute != null);
+
+      string resourcePath;
+      if (string.IsNullOrEmpty(ResourcePath)) {
+        string defaultAssetPath = attribute.DefaultPath;
+        var indexOfResources = defaultAssetPath.LastIndexOf("/Resources/", StringComparison.OrdinalIgnoreCase);
+        if (indexOfResources < 0) {
+          Log.Trace($"The default path {defaultAssetPath} does not contain a /Resources/ folder. Unable to load resource for {type.FullName}.");
+          return default;
+        }
+
+        // try to load from resources, maybe?
+        resourcePath = defaultAssetPath.Substring(indexOfResources + "/Resources/".Length);
+
+        // drop the extension
+        if (Path.HasExtension(resourcePath)) {
+          resourcePath = resourcePath.Substring(0, resourcePath.LastIndexOf('.'));
+        }
+      } else {
+        resourcePath = ResourcePath;
+      }
+
+      var instance = UnityEngine.Resources.Load(resourcePath, type);
+      if (!instance) {
+        Log.Trace($"Unable to load resource at path {resourcePath} for type {type.FullName}");
+        return default;
+      }
+
+      if (InstantiateIfLoadedInEditor && Application.isEditor) {
+        var clone = Object.Instantiate(instance);
+        return new((FusionGlobalScriptableObject)clone, x => Object.Destroy(clone));
+      } else {
+        return new((FusionGlobalScriptableObject)instance, x => UnityEngine.Resources.UnloadAsset(instance));  
+      }
+    }
   }
 }
 

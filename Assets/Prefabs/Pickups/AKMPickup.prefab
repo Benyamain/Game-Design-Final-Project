@@ -84,7 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb11fdc0e2b0b3742a924c6ed3de4bc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: 2
+  Type: 4
   Radius: 0.5
   Cooldown: 12
   LayerMask:

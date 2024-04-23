@@ -76,9 +76,10 @@ namespace SimpleFPS
 			if (PlayerData.TryGet(killerPlayerRef, out PlayerData killerData))
 			{
 				killerData.Kills++;
+				UpgradeWeapon(killerPlayerRef, killerData);
 				killerData.LastKillTick = Runner.Tick;
 				PlayerData.Set(killerPlayerRef, killerData);
-				UpgradeWeapon(killerPlayerRef, killerData);
+				//UpgradeWeapon(killerPlayerRef, killerData);
 			}
 
 			// Update statistics of the victim player.
@@ -207,7 +208,7 @@ namespace SimpleFPS
 				return;
 
 			// give code to add 5 kills to the player after every respawn
-			//playerData.Kills += 5;
+			playerData.Kills = 4;
 
 
 			Debug.LogWarning($"{playerRef} connected.");

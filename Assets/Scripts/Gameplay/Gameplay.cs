@@ -18,6 +18,7 @@ namespace SimpleFPS
 		public string Nickname { get => default; set { } }
 		public PlayerRef PlayerRef;
 		public int Kills;
+
 		public int Deaths;
 		public int LastKillTick;
 		public int StatisticPosition;
@@ -47,6 +48,9 @@ namespace SimpleFPS
 		[Capacity(32)]
 		[HideInInspector]
 		public NetworkDictionary<PlayerRef, PlayerData> PlayerData { get; }
+
+		private Dictionary<PlayerRef, Player> playerInstances = new Dictionary<PlayerRef, Player>();
+
 		[Networked]
 		[HideInInspector]
 		public TickTimer RemainingTime { get; set; }
@@ -74,7 +78,7 @@ namespace SimpleFPS
 				killerData.Kills++;
 				killerData.LastKillTick = Runner.Tick;
 				PlayerData.Set(killerPlayerRef, killerData);
-				UpgradeWeapon(killerData);
+				UpgradeWeapon(killerPlayerRef, killerData);
 			}
 
 			// Update statistics of the victim player.
@@ -104,25 +108,27 @@ namespace SimpleFPS
 			}
 		}
 
-		public void UpgradeWeapon(PlayerData playerData)
+		// public void UpgradeWeapon(PlayerRef playerRef)
+		public void UpgradeWeapon(PlayerRef playerRef, PlayerData playerData)
 		{
-			if (playerData.IsAlive == false)
-				return;
-
-
-			if (playerData.Kills == 5)
+			if (playerInstances.TryGetValue(playerRef, out Player player) && player.IsAlive)
 			{
-				Weapons.SwitchWeapon(EWeaponType.Shotgun);
-			}
-			else if (playerData.Kills == 10)
-			{
-				Weapons.SwitchWeapon(EWeaponType.Rifle);
-			}
-			else if (playerData.Kills == 15)
-			{
-				Weapons.SwitchWeapon(EWeaponType.AKM);
+				int kills = playerData.Kills;
+				switch (kills)
+				{
+					case 5:
+						player.Weapons.SwitchWeapon(EWeaponType.Shotgun);
+						break;
+					case 10:
+						player.Weapons.SwitchWeapon(EWeaponType.Rifle);
+						break;
+					case 15:
+						player.Weapons.SwitchWeapon(EWeaponType.AKM);
+						break;
+				}
 			}
 		}
+
 
 		public override void FixedUpdateNetwork()
 		{
@@ -196,6 +202,8 @@ namespace SimpleFPS
 			var spawnPoint = GetSpawnPoint();
 			var player = Runner.Spawn(PlayerPrefab, spawnPoint.position, spawnPoint.rotation, playerRef);
 
+			playerInstances[playerRef] = player;
+
 			// Set player instance as PlayerObject so we can easily get it from other locations.
 			Runner.SetPlayerObject(playerRef, player.Object);
 
@@ -217,6 +225,7 @@ namespace SimpleFPS
 			}
 
 			Runner.Despawn(player.Object);
+			playerInstances.Remove(playerRef);
 
 			RecalculateStatisticPositions();
 		}

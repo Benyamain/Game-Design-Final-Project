@@ -167,6 +167,25 @@ namespace SimpleFPS
 			CameraHandle.localRotation = Quaternion.Euler(pitchRotation);
 		}
 
+		// public void UpgradeWeapon(PlayerRef killerPlayerRef)
+		// {
+		// 	if (playerData.IsAlive == false)
+		// 		return;
+
+		// 	if (playerData.Kills == 5)
+		// 	{
+		// 		Player.Weapons.SwitchWeapon(EWeaponType.Shotgun);
+		// 	}
+		// 	else if (playerData.Kills == 10)
+		// 	{
+		// 		Player.Weapons.SwitchWeapon(EWeaponType.Rifle);
+		// 	}
+		// 	else if (playerData.Kills == 15)
+		// 	{
+		// 		Player.Weapons.SwitchWeapon(EWeaponType.AKM);
+		// 	}
+		// }
+
 		private void ProcessInput(NetworkedInput input)
 		{
 			// Processing input - look rotation, jump, movement, weapon fire, weapon switching, weapon reloading, spray decal.

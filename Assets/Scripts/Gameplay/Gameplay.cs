@@ -74,6 +74,7 @@ namespace SimpleFPS
 				killerData.Kills++;
 				killerData.LastKillTick = Runner.Tick;
 				PlayerData.Set(killerPlayerRef, killerData);
+				UpgradeWeapon(killerData);
 			}
 
 			// Update statistics of the victim player.
@@ -100,6 +101,26 @@ namespace SimpleFPS
 			if (Runner.GameMode == GameMode.Shared)
 			{
 				throw new System.NotSupportedException("This sample doesn't support Shared Mode, please start the game as Server, Host or Client.");
+			}
+		}
+
+		public void UpgradeWeapon(PlayerData playerData)
+		{
+			if (playerData.IsAlive == false)
+				return;
+
+
+			if (playerData.Kills == 5)
+			{
+				Weapons.SwitchWeapon(EWeaponType.Shotgun);
+			}
+			else if (playerData.Kills == 10)
+			{
+				Weapons.SwitchWeapon(EWeaponType.Rifle);
+			}
+			else if (playerData.Kills == 15)
+			{
+				Weapons.SwitchWeapon(EWeaponType.AKM);
 			}
 		}
 

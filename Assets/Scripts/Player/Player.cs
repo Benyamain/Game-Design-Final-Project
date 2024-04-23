@@ -12,29 +12,29 @@ namespace SimpleFPS
 	public class Player : NetworkBehaviour
 	{
 		[Header("Components")]
-		public SimpleKCC     KCC;
-		public Weapons       Weapons;
-		public Health        Health;
-		public Animator      Animator;
-		public HitboxRoot    HitboxRoot;
+		public SimpleKCC KCC;
+		public Weapons Weapons;
+		public Health Health;
+		public Animator Animator;
+		public HitboxRoot HitboxRoot;
 
 		[Header("Setup")]
-		public float         MoveSpeed = 6f;
-		public float         JumpForce = 10f;
-		public AudioSource   JumpSound;
-		public AudioClip[]   JumpClips;
-		public Transform     CameraHandle;
-		public GameObject    FirstPersonRoot;
-		public GameObject    ThirdPersonRoot;
+		public float MoveSpeed = 6f;
+		public float JumpForce = 10f;
+		public AudioSource JumpSound;
+		public AudioClip[] JumpClips;
+		public Transform CameraHandle;
+		public GameObject FirstPersonRoot;
+		public GameObject ThirdPersonRoot;
 		public NetworkObject SprayPrefab;
 
 		[Header("Movement")]
-		public float         UpGravity = 15f;
-		public float         DownGravity = 25f;
-		public float         GroundAcceleration = 55f;
-		public float         GroundDeceleration = 25f;
-		public float         AirAcceleration = 25f;
-		public float         AirDeceleration = 1.3f;
+		public float UpGravity = 15f;
+		public float DownGravity = 25f;
+		public float GroundAcceleration = 55f;
+		public float GroundDeceleration = 25f;
+		public float AirAcceleration = 25f;
+		public float AirDeceleration = 1.3f;
 
 		[Networked]
 		private NetworkButtons _previousButtons { get; set; }
@@ -202,23 +202,25 @@ namespace SimpleFPS
 				Weapons.Reload();
 			}
 
-			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol))
+			if (false)
 			{
-				Weapons.SwitchWeapon(EWeaponType.Pistol);
+				if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol))
+				{
+					Weapons.SwitchWeapon(EWeaponType.Pistol);
+				}
+				else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Rifle))
+				{
+					Weapons.SwitchWeapon(EWeaponType.Rifle);
+				}
+				else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Shotgun))
+				{
+					Weapons.SwitchWeapon(EWeaponType.Shotgun);
+				}
+				else if (input.Buttons.WasPressed(_previousButtons, EInputButton.AKM))
+				{
+					Weapons.SwitchWeapon(EWeaponType.AKM);
+				}
 			}
-			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Rifle))
-			{
-				Weapons.SwitchWeapon(EWeaponType.Rifle);
-			}
-			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Shotgun))
-			{
-				Weapons.SwitchWeapon(EWeaponType.Shotgun);
-			}
-			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.AKM))
-			{
-				Weapons.SwitchWeapon(EWeaponType.AKM);
-			}
-
 			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Spray) && HasStateAuthority)
 			{
 				if (Runner.GetPhysicsScene().Raycast(CameraHandle.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Default"), QueryTriggerInteraction.Ignore))

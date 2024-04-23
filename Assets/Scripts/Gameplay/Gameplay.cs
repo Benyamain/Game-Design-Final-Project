@@ -113,18 +113,30 @@ namespace SimpleFPS
 		{
 			if (playerInstances.TryGetValue(playerRef, out Player player))
 			{
-				int kills = playerData.Kills;
-				switch (kills)
+				var weapons = player.GetComponent<Weapons>();  // Ensure the player has a Weapons component
+				if (weapons != null)
 				{
-					case 5:
-						player.Weapons.SwitchWeapon(EWeaponType.Shotgun);
-						break;
-					case 10:
-						player.Weapons.SwitchWeapon(EWeaponType.Rifle);
-						break;
-					case 15:
-						player.Weapons.SwitchWeapon(EWeaponType.AKM);
-						break;
+					EWeaponType newWeaponType = EWeaponType.None;
+					int kills = playerData.Kills;
+
+					if (kills == 5)
+					{
+						newWeaponType = EWeaponType.Shotgun;
+					}
+					else if (kills == 10)
+					{
+						newWeaponType = EWeaponType.Rifle;
+					}
+					else if (kills == 15)
+					{
+						newWeaponType = EWeaponType.AKM;
+					}
+
+					if (newWeaponType != EWeaponType.None && weapons.PickupWeapon(newWeaponType))
+					{
+						// Assume PickupWeapon handles all necessary setup for the new weapon
+						Debug.Log("Weapon upgraded to " + newWeaponType.ToString());
+					}
 				}
 			}
 		}

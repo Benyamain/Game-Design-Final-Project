@@ -18,6 +18,10 @@ namespace Fusion.Menu {
     /// </summary>
     [InlineHelp, SerializeField] protected Image _sceneThumbnail;
     /// <summary>
+    /// The scene thumbnail for Background. Can be null.
+    /// </summary>
+    [InlineHelp, SerializeField] protected Image _backgroundSceneThumbnail;
+    /// <summary>
     /// The username input UI part.
     /// </summary>
     [InlineHelp, SerializeField] protected GameObject _usernameView;
@@ -41,6 +45,10 @@ namespace Fusion.Menu {
     /// The open party screen button.
     /// </summary>
     [InlineHelp, SerializeField] protected Button _partyButton;
+    /// <summary>
+    /// The open gamemode screen button.
+    /// </summary>
+    [InlineHelp, SerializeField] protected Button _gameModeButton;
     /// <summary>
     /// The quikc play button.
     /// </summary>
@@ -120,6 +128,11 @@ namespace Fusion.Menu {
           _sceneThumbnail.transform.parent.gameObject.SetActive(true);
           _sceneThumbnail.sprite = ConnectionArgs.Scene.Preview;
           _sceneThumbnail.gameObject.SendMessage("OnResolutionChanged");
+
+          // Background Scene
+          _backgroundSceneThumbnail.transform.parent.gameObject.SetActive(true);
+          _backgroundSceneThumbnail.sprite = ConnectionArgs.Scene.Preview;
+          _backgroundSceneThumbnail.gameObject.SendMessage("OnResolutionChanged");
         } else {
           _sceneThumbnail.transform.parent.gameObject.SetActive(false);
           _sceneThumbnail.sprite = null;
@@ -207,6 +220,13 @@ namespace Fusion.Menu {
     /// </summary>
     protected virtual void OnPartyButtonPressed() {
       Controller.Show<PhotonMenuUIParty>();
+    }
+
+    /// <summary>
+    /// Is called when the <see cref="_gameModeButton"/> is pressed using SendMessage() from the UI object.
+    /// </summary>
+    protected virtual void OnGameModePressed() {
+      Controller.Show<PhotonMenuGameMode>();
     }
 
     /// <summary>

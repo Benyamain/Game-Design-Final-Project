@@ -91,6 +91,11 @@ namespace Fusion.Menu {
     /// </summary>
     protected PhotonMenuGraphicsSettings _graphicsSettings;
     /// <summary>
+    /// The default sprite to use when there is no scene preview.
+    /// </summary>
+    [InlineHelp, SerializeField] protected Image _sceneThumbnail;
+
+    /// <summary>
     /// The app version list including the machine-id.
     /// </summary>
     protected List<string> _appVersions;
@@ -166,6 +171,17 @@ namespace Fusion.Menu {
       _uiMaxPlayers.SetTextWithoutNotify(Math.Clamp(ConnectionArgs.MaxPlayerCount, 1, Config.MaxPlayerCount).ToString());
       _uiFullscreen.isOn = _graphicsSettings.Fullscreen;
       _uiVSyncCount.isOn = _graphicsSettings.VSync;
+
+      if (_sceneThumbnail != null) {
+        if (ConnectionArgs.Scene.Preview != null) {
+          _sceneThumbnail.transform.parent.gameObject.SetActive(true);
+          _sceneThumbnail.sprite = ConnectionArgs.Scene.Preview;
+          _sceneThumbnail.gameObject.SendMessage("OnResolutionChanged");
+        } else {
+          _sceneThumbnail.transform.parent.gameObject.SetActive(false);
+          _sceneThumbnail.sprite = null;
+        }
+      }
 
       ShowUser();
     }

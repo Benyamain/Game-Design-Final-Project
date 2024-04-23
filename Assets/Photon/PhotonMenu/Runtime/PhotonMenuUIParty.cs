@@ -29,6 +29,11 @@ namespace Fusion.Menu {
     /// </summary>
     [InlineHelp, SerializeField] protected Button _backButton;
     /// <summary>
+    /// The scene thumbnail. Can be null.
+    /// </summary>
+    [InlineHelp, SerializeField] protected Image _sceneThumbnail;
+
+    /// <summary>
     /// Callback fired before the connection is created.
     /// This can stop the connection attempt with an <see cref="ConnectResult"/>.
     /// </summary>
@@ -78,6 +83,17 @@ namespace Fusion.Menu {
       if (_regionRequest == null || _regionRequest.IsFaulted) {
         // Request the regions already when entering the party menu
         _regionRequest = Connection.RequestAvailableOnlineRegionsAsync(ConnectionArgs);
+      }
+
+      if (_sceneThumbnail != null) {
+        if (ConnectionArgs.Scene.Preview != null) {
+          _sceneThumbnail.transform.parent.gameObject.SetActive(true);
+          _sceneThumbnail.sprite = ConnectionArgs.Scene.Preview;
+          _sceneThumbnail.gameObject.SendMessage("OnResolutionChanged");
+        } else {
+          _sceneThumbnail.transform.parent.gameObject.SetActive(false);
+          _sceneThumbnail.sprite = null;
+        }
       }
 
       ShowUser();

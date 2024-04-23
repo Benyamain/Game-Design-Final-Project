@@ -111,7 +111,7 @@ namespace SimpleFPS
 		// public void UpgradeWeapon(PlayerRef playerRef)
 		public void UpgradeWeapon(PlayerRef playerRef, PlayerData playerData)
 		{
-			if (playerInstances.TryGetValue(playerRef, out Player player) && player.IsAlive)
+			if (playerInstances.TryGetValue(playerRef, out Player player))
 			{
 				int kills = playerData.Kills;
 				switch (kills)

@@ -106,6 +106,8 @@ namespace SimpleFPS
 			{
 				throw new System.NotSupportedException("This sample doesn't support Shared Mode, please start the game as Server, Host or Client.");
 			}
+
+
 		}
 
 		// public void UpgradeWeapon(PlayerRef playerRef)
@@ -203,6 +205,10 @@ namespace SimpleFPS
 
 			if (playerData.IsConnected == true)
 				return;
+
+			// give code to add 5 kills to the player after every respawn
+			//playerData.Kills += 5;
+
 
 			Debug.LogWarning($"{playerRef} connected.");
 

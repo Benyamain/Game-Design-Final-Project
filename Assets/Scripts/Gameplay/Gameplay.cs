@@ -32,7 +32,8 @@ namespace SimpleFPS
 		Finished = 2,
 	}
 
-	public enum GamePlayMode{
+	public enum GamePlayMode
+	{
 		DeathMatch = 0,
 		GunGame = 1,
 	}
@@ -43,7 +44,11 @@ namespace SimpleFPS
 	public class Gameplay : NetworkBehaviour
 	{
 		public GameUI GameUI;
+
+		public Player player;
 		public Player PlayerPrefab;
+
+
 		public float GameDuration = 180f;
 		public float PlayerRespawnTime = 5f;
 		public float DoubleDamageDuration = 30f;
@@ -78,6 +83,10 @@ namespace SimpleFPS
 			if (PlayerData.TryGet(killerPlayerRef, out PlayerData killerData))
 			{
 				killerData.Kills++;
+				if (killerData.Kills == 5 || killerData.Kills == 10 || killerData.Kills == 15)
+				{
+					player.upgradeWeapon(killerPlayerRef, killerData.Kills);
+				}
 				killerData.LastKillTick = Runner.Tick;
 				PlayerData.Set(killerPlayerRef, killerData);
 			}

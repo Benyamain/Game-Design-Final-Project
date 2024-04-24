@@ -13,29 +13,29 @@ namespace SimpleFPS
 	public class Player : NetworkBehaviour
 	{
 		[Header("Components")]
-		public SimpleKCC     KCC;
-		public Weapons       Weapons;
-		public Health        Health;
-		public Animator      Animator;
-		public HitboxRoot    HitboxRoot;
+		public SimpleKCC KCC;
+		public Weapons Weapons;
+		public Health Health;
+		public Animator Animator;
+		public HitboxRoot HitboxRoot;
 
 		[Header("Setup")]
-		public float         MoveSpeed = 6f;
-		public float         JumpForce = 10f;
-		public AudioSource   JumpSound;
-		public AudioClip[]   JumpClips;
-		public Transform     CameraHandle;
-		public GameObject    FirstPersonRoot;
-		public GameObject    ThirdPersonRoot;
+		public float MoveSpeed = 6f;
+		public float JumpForce = 10f;
+		public AudioSource JumpSound;
+		public AudioClip[] JumpClips;
+		public Transform CameraHandle;
+		public GameObject FirstPersonRoot;
+		public GameObject ThirdPersonRoot;
 		public NetworkObject SprayPrefab;
 
 		[Header("Movement")]
-		public float         UpGravity = 15f;
-		public float         DownGravity = 25f;
-		public float         GroundAcceleration = 55f;
-		public float         GroundDeceleration = 25f;
-		public float         AirAcceleration = 25f;
-		public float         AirDeceleration = 1.3f;
+		public float UpGravity = 15f;
+		public float DownGravity = 25f;
+		public float GroundAcceleration = 55f;
+		public float GroundDeceleration = 25f;
+		public float AirAcceleration = 25f;
+		public float AirDeceleration = 1.3f;
 
 		[Networked]
 		private NetworkButtons _previousButtons { get; set; }
@@ -48,7 +48,10 @@ namespace SimpleFPS
 
 		private SceneObjects _sceneObjects;
 
-		public PlayerData playerData;
+		//public PlayerData playerData;
+		//public PlayerRef playerRef;
+
+		public Gameplay gameplay;
 
 
 		public void PlayFireEffect()
@@ -175,7 +178,8 @@ namespace SimpleFPS
 		{
 			// Processing input - look rotation, jump, movement, weapon fire, weapon switching, weapon reloading, spray decal.
 
-			KCC.AddLookRotation(input.LookRotationDelta, -89f, 89f);
+			KCC?.AddLookRotation(input.LookRotationDelta, -89f, 89f);
+
 
 			// It feels better when player falls quicker
 			KCC.SetGravity(KCC.RealVelocity.y >= 0f ? -UpGravity : -DownGravity);
@@ -206,23 +210,50 @@ namespace SimpleFPS
 				Weapons.Reload();
 			}
 
-			if (Input.GetKeyUp(KeyCode.K))
-			{
-				playerData.Kills++;
-				Debug.Log("Player has: " + playerData.Kills);
-			}
+			// Handling the kill count increment
+			// if (Input.GetKeyUp(KeyCode.K))
+			// {
+			// 	if (!playerData.IsConnected)
+			// 	{
+			// 		Debug.LogError("Player data is not initialized.");
+			// 		return; // Exit if player data is not initialized
+			// 	}
 
-			
+			// 	playerData.Kills++;
+			// 	Debug.Log("Player has: " + playerData.Kills + " kills.");
+
+			// 	if (gameplay == null)
+			// 	{
+			// 		Debug.LogError("Gameplay instance is not initialized.");
+			// 		return; // Exit if gameplay instance is null
+			// 	}
+
+			// 	if (playerRef.IsNone || playerRef == default(PlayerRef))
+			// 	{
+			// 		Debug.LogError("Player reference is not initialized or is invalid.");
+			// 		return; // Exit if player reference is invalid
+			// 	}
+
+			// 	gameplay.PlayerData.Set(playerRef, playerData);
+			// }
+
+
 
 			//if (Gameplay.PlayMode ==GamePlayMode.GunGame){
 
-				if (playerData.Kills >= 5 && playerData.Kills < 10){
-					Weapons.PickupWeapon(EWeaponType.Rifle);
-				}else if (playerData.Kills >= 10 && playerData.Kills < 15){
-					Weapons.PickupWeapon(EWeaponType.Shotgun);
-				}else if (playerData.Kills >= 15 && playerData.Kills < 20){
-					Weapons.PickupWeapon(EWeaponType.AKM);
-				}
+
+			// if (playerData.Kills >= 5 && playerData.Kills < 10)
+			// {
+			// 	Weapons.PickupWeapon(EWeaponType.Rifle);
+			// }
+			// else if (playerData.Kills >= 10 && playerData.Kills < 15)
+			// {
+			// 	Weapons.PickupWeapon(EWeaponType.Shotgun);
+			// }
+			// else if (playerData.Kills >= 15 && playerData.Kills < 20)
+			// {
+			// 	Weapons.PickupWeapon(EWeaponType.AKM);
+			// }
 			//}
 			// else if (Gameplay.PlayMode == GamePlayMode.DeathMatch){
 			// 	// Keybind for selecting weapons
@@ -244,7 +275,7 @@ namespace SimpleFPS
 			// 		Weapons.SwitchWeapon(EWeaponType.AKM);
 			// 	 }
 			// }
-			
+
 
 			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Spray) && HasStateAuthority)
 			{
@@ -258,6 +289,25 @@ namespace SimpleFPS
 
 			// Store input buttons when the processing is done - next tick it is compared against current input buttons.
 			_previousButtons = input.Buttons;
+		}
+
+		public void upgradeWeapon(PlayerRef killerPlayerRef, int kills)
+		{
+			// if (kills >= 5 && kills < 10)
+			if (kills >= 1 && kills < 2)
+			{
+				Weapons.PickupWeapon(EWeaponType.Rifle);
+			}
+			// else if (kills >= 10 && kills < 15)
+			else if (kills >= 2 && kills < 3)
+			{
+				Weapons.PickupWeapon(EWeaponType.Shotgun);
+			}
+			// else if (kills >= 15 && kills < 20)
+			else if (kills >= 3 && kills < 4)
+			{
+				Weapons.PickupWeapon(EWeaponType.AKM);
+			}
 		}
 
 		private void MovePlayer(Vector3 desiredMoveVelocity = default, float jumpImpulse = default)

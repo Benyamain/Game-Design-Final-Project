@@ -83,7 +83,9 @@ namespace SimpleFPS
 			if (PlayerData.TryGet(killerPlayerRef, out PlayerData killerData))
 			{
 				killerData.Kills++;
-				if (killerData.Kills == 5 || killerData.Kills == 10 || killerData.Kills == 15)
+				//make a log to see if the player is getting the kills
+				Debug.Log("Player " + killerData.Nickname + " has " + killerData.Kills + " kills");
+				if (killerData.Kills == 1 || killerData.Kills == 2 || killerData.Kills == 3)
 				{
 					player.upgradeWeapon(killerPlayerRef, killerData.Kills);
 				}

@@ -214,7 +214,7 @@ namespace SimpleFPS
 
 			
 
-			//if (Gameplay.PlayMode ==GamePlayMode.GunGame){
+			if (Gameplay.PlayMode ==GamePlayMode.GunGame){
 
 				if (playerData.Kills >= 5 && playerData.Kills < 10){
 					Weapons.PickupWeapon(EWeaponType.Rifle);
@@ -223,27 +223,27 @@ namespace SimpleFPS
 				}else if (playerData.Kills >= 15 && playerData.Kills < 20){
 					Weapons.PickupWeapon(EWeaponType.AKM);
 				}
-			//}
-			// else if (Gameplay.PlayMode == GamePlayMode.DeathMatch){
-			// 	// Keybind for selecting weapons
-			// 	if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol))
-			// 	{
-			// 		Weapons.SwitchWeapon(EWeaponType.Pistol);
-			// 		//playerData.Kills
-			// 	}
-			// 	else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Rifle))
-			// 	{
-			// 		Weapons.SwitchWeapon(EWeaponType.Rifle);
-			// 	}
-			// 	else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Shotgun))
-			// 	{
-			// 		Weapons.SwitchWeapon(EWeaponType.Shotgun);
-			// 	}
-			// 	else if (input.Buttons.WasPressed(_previousButtons, EInputButton.AKM))
-			// 	{
-			// 		Weapons.SwitchWeapon(EWeaponType.AKM);
-			// 	 }
-			// }
+			}
+			else if (Gameplay.PlayMode == GamePlayMode.DeathMatch){
+				// Keybind for selecting weapons
+				if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol))
+				{
+					Weapons.SwitchWeapon(EWeaponType.Pistol);
+					//playerData.Kills
+				}
+				else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Rifle))
+				{
+					Weapons.SwitchWeapon(EWeaponType.Rifle);
+				}
+				else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Shotgun))
+				{
+					Weapons.SwitchWeapon(EWeaponType.Shotgun);
+				}
+				else if (input.Buttons.WasPressed(_previousButtons, EInputButton.AKM))
+				{
+					Weapons.SwitchWeapon(EWeaponType.AKM);
+				 }
+			}
 			
 
 			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Spray) && HasStateAuthority)

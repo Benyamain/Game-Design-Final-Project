@@ -2,6 +2,7 @@ using UnityEngine;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Cinemachine;
+using UnityEngine.InputSystem;
 
 namespace SimpleFPS
 {
@@ -46,6 +47,9 @@ namespace SimpleFPS
 		private int _visibleJumpCount;
 
 		private SceneObjects _sceneObjects;
+
+		public PlayerData playerData;
+
 
 		public void PlayFireEffect()
 		{
@@ -202,22 +206,38 @@ namespace SimpleFPS
 				Weapons.Reload();
 			}
 
-			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol))
+			if (Input.GetKeyDown(KeyCode.K))
 			{
-				Weapons.SwitchWeapon(EWeaponType.Pistol);
+				playerData.Kills++;
+				Debug.Log("Player has: " + playerData.Kills);
 			}
-			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Rifle))
-			{
+
+			if (playerData.Kills >= 5 && playerData.Kills < 10){
 				Weapons.SwitchWeapon(EWeaponType.Rifle);
-			}
-			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Shotgun))
-			{
+			}else if (playerData.Kills >= 10 && playerData.Kills < 15){
 				Weapons.SwitchWeapon(EWeaponType.Shotgun);
-			}
-			else if (input.Buttons.WasPressed(_previousButtons, EInputButton.AKM))
-			{
+			}else if (playerData.Kills >= 15 && playerData.Kills < 20){
 				Weapons.SwitchWeapon(EWeaponType.AKM);
 			}
+
+			// Keybind for selecting weapons
+				// if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol))
+				// {
+				// 	Weapons.SwitchWeapon(EWeaponType.Pistol);
+				// 	//playerData.Kills
+				// }
+				// else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Rifle))
+				// {
+				// 	Weapons.SwitchWeapon(EWeaponType.Rifle);
+				// }
+				// else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Shotgun))
+				// {
+				// 	Weapons.SwitchWeapon(EWeaponType.Shotgun);
+				// }
+				// else if (input.Buttons.WasPressed(_previousButtons, EInputButton.AKM))
+				// {
+				// 	Weapons.SwitchWeapon(EWeaponType.AKM);
+				// }
 
 			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Spray) && HasStateAuthority)
 			{

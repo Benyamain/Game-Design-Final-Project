@@ -8,6 +8,7 @@ namespace SimpleFPS
 	/// </summary>
 	public class Health : NetworkBehaviour
 	{
+		public Weapons weapons;
 		public float      MaxHealth = 100f;
 		public float      ImmortalDurationAfterSpawn = 2f;
 		public GameObject ImmortalityIndicator;

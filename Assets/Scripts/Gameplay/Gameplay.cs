@@ -32,6 +32,11 @@ namespace SimpleFPS
 		Finished = 2,
 	}
 
+	public enum GamePlayMode{
+		DeathMatch = 0,
+		GunGame = 1,
+	}
+
 	/// <summary>
 	/// Drives gameplay logic - state, timing, handles player connect/disconnect/spawn/despawn/death, calculates statistics.
 	/// </summary>
@@ -53,6 +58,7 @@ namespace SimpleFPS
 		[Networked]
 		[HideInInspector]
 		public EGameplayState State { get; set; }
+		public static GamePlayMode PlayMode { get; set; }
 
 		public bool DoubleDamageActive => State == EGameplayState.Running && RemainingTime.RemainingTime(Runner).GetValueOrDefault() < DoubleDamageDuration;
 

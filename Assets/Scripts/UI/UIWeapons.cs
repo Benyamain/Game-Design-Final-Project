@@ -19,17 +19,20 @@ namespace SimpleFPS
 	    private int _lastClipAmmo;
 	    private int _lastRemainingAmmo;
 
+
 	    public void UpdateWeapons(Weapons weapons)
 	    {
 		    SetWeapon(weapons.CurrentWeapon);
 
 		    // Update weapon thumbnails.
-		    for (int i = 0; i < weapons.AllWeapons.Length; i++)
-		    {
-			    var weapon = weapons.AllWeapons[i];
-			    WeaponThumbnails[i].alpha = weapon.IsCollected && weapon.HasAmmo ? 1f : 0.2f;
-		    }
-
+			if(Gameplay.PlayMode == GamePlayMode.GunGame ){
+			}else if (Gameplay.PlayMode == GamePlayMode.DeathMatch ){
+				for (int i = 0; i < weapons.AllWeapons.Length; i++)
+				{
+					var weapon = weapons.AllWeapons[i];
+					WeaponThumbnails[i].alpha = weapon.IsCollected && weapon.HasAmmo ? 1f : 0.2f;
+				}
+			}
 		    if (_weapon == null)
 			    return;
 

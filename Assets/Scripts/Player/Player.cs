@@ -206,38 +206,45 @@ namespace SimpleFPS
 				Weapons.Reload();
 			}
 
-			if (Input.GetKeyDown(KeyCode.K))
+			if (Input.GetKeyUp(KeyCode.K))
 			{
 				playerData.Kills++;
 				Debug.Log("Player has: " + playerData.Kills);
 			}
 
-			if (playerData.Kills >= 5 && playerData.Kills < 10){
-				Weapons.SwitchWeapon(EWeaponType.Rifle);
-			}else if (playerData.Kills >= 10 && playerData.Kills < 15){
-				Weapons.SwitchWeapon(EWeaponType.Shotgun);
-			}else if (playerData.Kills >= 15 && playerData.Kills < 20){
-				Weapons.SwitchWeapon(EWeaponType.AKM);
-			}
+			
 
-			// Keybind for selecting weapons
-				// if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol))
-				// {
-				// 	Weapons.SwitchWeapon(EWeaponType.Pistol);
-				// 	//playerData.Kills
-				// }
-				// else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Rifle))
-				// {
-				// 	Weapons.SwitchWeapon(EWeaponType.Rifle);
-				// }
-				// else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Shotgun))
-				// {
-				// 	Weapons.SwitchWeapon(EWeaponType.Shotgun);
-				// }
-				// else if (input.Buttons.WasPressed(_previousButtons, EInputButton.AKM))
-				// {
-				// 	Weapons.SwitchWeapon(EWeaponType.AKM);
-				// }
+			//if (Gameplay.PlayMode ==GamePlayMode.GunGame){
+
+				if (playerData.Kills >= 5 && playerData.Kills < 10){
+					Weapons.PickupWeapon(EWeaponType.Rifle);
+				}else if (playerData.Kills >= 10 && playerData.Kills < 15){
+					Weapons.PickupWeapon(EWeaponType.Shotgun);
+				}else if (playerData.Kills >= 15 && playerData.Kills < 20){
+					Weapons.PickupWeapon(EWeaponType.AKM);
+				}
+			//}
+			// else if (Gameplay.PlayMode == GamePlayMode.DeathMatch){
+			// 	// Keybind for selecting weapons
+			// 	if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol))
+			// 	{
+			// 		Weapons.SwitchWeapon(EWeaponType.Pistol);
+			// 		//playerData.Kills
+			// 	}
+			// 	else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Rifle))
+			// 	{
+			// 		Weapons.SwitchWeapon(EWeaponType.Rifle);
+			// 	}
+			// 	else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Shotgun))
+			// 	{
+			// 		Weapons.SwitchWeapon(EWeaponType.Shotgun);
+			// 	}
+			// 	else if (input.Buttons.WasPressed(_previousButtons, EInputButton.AKM))
+			// 	{
+			// 		Weapons.SwitchWeapon(EWeaponType.AKM);
+			// 	 }
+			// }
+			
 
 			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Spray) && HasStateAuthority)
 			{

@@ -226,7 +226,7 @@ namespace Fusion.Menu {
     /// Is called when the <see cref="_gameModeButton"/> is pressed using SendMessage() from the UI object.
     /// </summary>
     protected virtual void OnGameModePressed() {
-      Controller.Show<PhotonMenuGameMode>();
+      Controller.Show<PhotonMenuUIGameMode>();
     }
 
     /// <summary>
